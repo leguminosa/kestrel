@@ -1,0 +1,27 @@
+version: '3.9'
+
+services:
+  postgres_kestrel:
+    image: postgres:12.8
+    container_name: kestrel_postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=kestrel_db
+      - POSTGRES_USER=kestrel_user
+      - POSTGRES_PASSWORD=magical_password
+    volumes:
+      - ./schema/kestrel_db:/docker-entrypoint-initdb.d
+      - kestrel_database:/var/lib/postgresql/data
+    tty: true
+    restart: unless-stopped
+    networks:
+      - backend
+
+volumes:
+  kestrel_database:
+    driver: local
+
+networks:
+  backend:
+    driver: bridge
