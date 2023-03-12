@@ -1,0 +1,4 @@
+# IDE and text editor configuration files
+.vscode/
+.idea/
+*.sw*
