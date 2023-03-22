@@ -27,6 +27,7 @@ func (v *Viperx) Read(target interface{}, path, name string) error {
 	}
 
 	return v.client.Unmarshal(target, func(dc *mapstructure.DecoderConfig) {
+		// TODO: make this configurable if there's ever a need to honor snake case json struct tag
 		// dc.TagName = "json"
 	})
 }
