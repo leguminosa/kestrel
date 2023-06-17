@@ -1,14 +1,18 @@
 package http
 
 import (
-	"github.com/gorilla/mux"
 	"github.com/leguminosa/kestrel/internal/app/http/controller"
+	"github.com/leguminosa/kestrel/pkg/util/httpx"
 )
 
-func register(handler *mux.Router, ctrl *controller.Controller) {
-	handler.HandleFunc("/", ctrl.HealthCheck)
-	handler.HandleFunc("/ping", ctrl.HealthCheck)
+func register(handler *httpx.Router, ctrl *controller.Controller) {
+	handler.GET("/", ctrl.HealthCheck)
+	handler.GET("/ping", ctrl.HealthCheck)
 
-	handler.HandleFunc("/gear/setoption", ctrl.GearOptionRouter)
-	handler.HandleFunc("/gear/setoption/{id}", ctrl.GearOptionRouterWithID)
+	// gear set option
+	handler.GET("/setoption", ctrl.GetGearSetOptions)
+	handler.GET("/setoption/{id}", ctrl.GetGearSetOption)
+	handler.POST("/setoption", ctrl.CreateGearSetOption)
+	handler.PUT("/setoption/{id}", ctrl.UpdateGearSetOption)
+	handler.DELETE("/setoption/{id}", ctrl.DeleteGearSetOption)
 }
