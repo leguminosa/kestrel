@@ -26,49 +26,11 @@ func NewGearHandler(module gear.GearModule) *GearHandler {
 	}
 }
 
-func (h *GearHandler) GearOptionRouter(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case "GET":
-		h.GetGearSetOptions(w, r)
-		return
-	case "POST":
-		h.CreateGearSetOption(w, r)
-		return
-	default:
-		wrapper.BadRequest(w, errors.New("method not allowed"), nil)
-		return
-	}
-}
-
-func (h *GearHandler) GearOptionRouterWithID(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case "GET":
-		h.GetGearSetOption(w, r)
-		return
-	case "PUT":
-		h.UpdateGearSetOption(w, r)
-		return
-	case "DELETE":
-		h.DeleteGearSetOption(w, r)
-		return
-	default:
-		wrapper.BadRequest(w, errors.New("method not allowed"), nil)
-		return
-	}
-}
-
 func (h *GearHandler) GetGearSetOptions(w http.ResponseWriter, r *http.Request) {
 	var (
 		ctx    = xcontext.GetAllContextFromIncomingRequest(r)
 		filter = &entity.GearSetOptionFilter{}
 	)
-
-	switch r.Method {
-	case "GET":
-	default:
-		wrapper.BadRequest(w, errors.New("method not allowed"), nil)
-		return
-	}
 
 	query := r.URL.Query()
 
@@ -99,22 +61,17 @@ func (h *GearHandler) GetGearSetOption(w http.ResponseWriter, r *http.Request) {
 		id  int
 	)
 
-	switch r.Method {
-	case "GET":
-	default:
-		wrapper.BadRequest(w, errors.New("method not allowed"), nil)
-		return
-	}
-
 	routeVars := mux.Vars(r)
 	rawID, found := routeVars["id"]
 	if !found {
 		wrapper.BadRequest(w, errors.New("missing id"), routeVars)
+		return
 	}
 
 	id = convert.ToInt(rawID)
 	if !(id > 0) {
 		wrapper.BadRequest(w, errors.New("invalid id"), rawID)
+		return
 	}
 
 	result, err := h.module.FindGearSetOptionByID(ctx, id)
@@ -131,13 +88,6 @@ func (h *GearHandler) CreateGearSetOption(w http.ResponseWriter, r *http.Request
 		ctx   = xcontext.GetAllContextFromIncomingRequest(r)
 		model = &entity.GearSetOption{}
 	)
-
-	switch r.Method {
-	case "POST":
-	default:
-		wrapper.BadRequest(w, errors.New("method not allowed"), nil)
-		return
-	}
 
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -166,13 +116,6 @@ func (h *GearHandler) UpdateGearSetOption(w http.ResponseWriter, r *http.Request
 		model = &entity.GearSetOption{}
 	)
 
-	switch r.Method {
-	case "PUT":
-	default:
-		wrapper.BadRequest(w, errors.New("method not allowed"), nil)
-		return
-	}
-
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		wrapper.BadRequest(w, err, body)
@@ -189,11 +132,13 @@ func (h *GearHandler) UpdateGearSetOption(w http.ResponseWriter, r *http.Request
 	rawID, found := routeVars["id"]
 	if !found {
 		wrapper.BadRequest(w, errors.New("missing id"), routeVars)
+		return
 	}
 
 	model.ID = convert.ToInt(rawID)
 	if !(model.ID > 0) {
 		wrapper.BadRequest(w, errors.New("invalid id"), rawID)
+		return
 	}
 
 	err = h.module.UpdateGearSetOption(ctx, model)
@@ -211,22 +156,17 @@ func (h *GearHandler) DeleteGearSetOption(w http.ResponseWriter, r *http.Request
 		id  int
 	)
 
-	switch r.Method {
-	case "DELETE":
-	default:
-		wrapper.BadRequest(w, errors.New("method not allowed"), nil)
-		return
-	}
-
 	routeVars := mux.Vars(r)
 	rawID, found := routeVars["id"]
 	if !found {
 		wrapper.BadRequest(w, errors.New("missing id"), routeVars)
+		return
 	}
 
 	id = convert.ToInt(rawID)
 	if !(id > 0) {
 		wrapper.BadRequest(w, errors.New("invalid id"), rawID)
+		return
 	}
 
 	err := h.module.DeleteGearSetOption(ctx, id)
