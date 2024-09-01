@@ -1,7 +1,0 @@
-{
-    "Port": ":9000",
-    "Database": {
-        "Master": "postgresql://kestrel_user:magical_password@127.0.0.1:5432/kestrel_db?sslmode=disable",
-        "Slave": "postgresql://kestrel_user:magical_password@127.0.0.1:5432/kestrel_db?sslmode=disable"
-    }
-}
