@@ -7,5 +7,9 @@ import (
 )
 
 type CharacterInterface interface {
-	GetByID(ctx context.Context, id int) (*entity.Character, error)
+	Find(ctx context.Context, filter *entity.CharacterFilter) (entity.CharacterResult, error)
+	FindByID(ctx context.Context, id int) (*entity.Character, error)
+	Save(ctx context.Context, model *entity.Character) (int, error)
+	Update(ctx context.Context, model *entity.Character) error
+	Delete(ctx context.Context, id int) error
 }

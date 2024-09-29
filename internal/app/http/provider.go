@@ -1,18 +1,20 @@
 package http
 
 import (
-	"github.com/labstack/echo/v4"
-	"github.com/leguminosa/kestrel/internal/app/http/instructions"
+	"github.com/gorilla/mux"
+	"github.com/leguminosa/kestrel/internal/app/http/controller"
+	"github.com/leguminosa/kestrel/pkg/httpx"
 )
 
-type controller struct {
-	characterHandler instructions.CharacterServer
+type controllerGroup struct {
+	character controller.Character
 }
 
-func provideHTTPServer(ctrl *controller) *echo.Echo {
-	e := echo.New()
+func provideHTTPServer(ctrl *controllerGroup) *mux.Router {
+	router := httpx.NewRouter()
+	v1 := router.PathPrefix("/v1").Subrouter()
 
-	e.GET("/characters/:id", ctrl.characterHandler.GetByID)
+	ctrl.character.RegisterRoutes(v1)
 
-	return e
+	return router.Mux()
 }

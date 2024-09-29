@@ -1,26 +1,29 @@
 package http
 
 import (
-	"github.com/labstack/echo/v4"
+	"net/http"
+
+	"github.com/gorilla/mux"
 	"github.com/leguminosa/kestrel/internal/config"
 )
 
 type (
 	serverImpl struct {
-		port string
-		echo *echo.Echo
+		server *http.Server
 
 		err error
 	}
 )
 
 func newServer(
-	cfg config.Config,
-	e *echo.Echo,
+	cfg config.ServerConfig,
+	router *mux.Router,
 ) *serverImpl {
 	return &serverImpl{
-		port: cfg.Server.Port,
-		echo: e,
+		server: &http.Server{
+			Addr:    cfg.Port,
+			Handler: router,
+		},
 	}
 }
 
@@ -32,5 +35,5 @@ func (s *serverImpl) Start() error {
 	if s.err != nil {
 		return s.err
 	}
-	return s.echo.Start(s.port)
+	return s.server.ListenAndServe()
 }
