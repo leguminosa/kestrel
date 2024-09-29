@@ -18,6 +18,6 @@ func Main() {
 
 	cfg.DatabaseConfig.ConnectionString = "user=kestrel_user password=magical_password dbname=counterside host=127.0.0.1 port=5432 sslmode=disable pool_health_check_period=10s"
 
-	log.Println("http running on port", cfg.Server.Port)
+	log.Println("http server running on port", cfg.Server.Port)
 	log.Fatalln(http.InitHTTPServer(ctx, cfg).Start())
 }

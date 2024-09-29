@@ -1,48 +1,25 @@
+SET TIMEZONE = 'Asia/Jakarta';
+
+create type character_rarity_type as enum('N', 'R', 'SR', 'SSR', 'ASSR');
+create type character_faction_type as enum('COUNTER', 'SOLDIER', 'MECH');
+create type character_status_type as enum('ACTIVE', 'INACTIVE', 'DELETED');
+
 create table if not exists characters (
     id BIGSERIAL not null constraint characters_pkey primary key,
-    character_rarity_id SMALLINT not null default 0,
-    character_faction_id SMALLINT not null default 0,
+    rarity character_rarity_type not null,
+    faction character_faction_type not null,
     name VARCHAR(255) not null default '',
-    cost SMALLINT not null default 0
+    cost SMALLINT not null default 0,
+    status character_status_type not null default 'INACTIVE',
+    created_at TIMESTAMPTZ not null default now(),
+    updated_at TIMESTAMPTZ
 );
-insert into characters (id, character_rarity_id, character_faction_id, name, cost) values
-(1, 4, 1, 'Xiao Lin', 4),
-(2, 4, 1, 'Kestrel Xiao Lin', 4),
-(3, 4, 1, 'Nest Keeper Xiao Lin', 4)
+insert into characters (id, rarity, faction, name, cost, status, created_at) values
+(1, 'SSR', 'COUNTER', 'Xiao Lin', 4, 'ACTIVE', '2023-03-23 21:09:35+07'),
+(2, 'SSR', 'COUNTER', 'Kestrel Xiao Lin', 4, 'ACTIVE', '2023-03-23 21:09:35+07'),
+(3, 'SSR', 'COUNTER', 'Nest Keeper Xiao Lin', 4, 'ACTIVE', '2023-03-23 21:09:35+07')
 ;
 SELECT SETVAL(
     ( SELECT PG_GET_SERIAL_SEQUENCE('characters', 'id') ),
     ( SELECT MAX(id) FROM characters )
-);
-
-create table if not exists character_rarities (
-    id SMALLSERIAL not null constraint character_rarities_pkey primary key,
-    code VARCHAR(255) not null default '',
-    name VARCHAR(255) not null default '',
-    weight SMALLINT not null default 0
-);
-insert into character_rarities (id, code, name, weight) values
-(1, 'N', 'Normal', 1),
-(2, 'R', 'Rare', 2),
-(3, 'SR', 'Super Rare', 3),
-(4, 'SSR', 'Super Super Rare', 4),
-(5, 'ASSR', 'Awakened SSR', 5)
-;
-SELECT SETVAL(
-    ( SELECT PG_GET_SERIAL_SEQUENCE('character_rarities', 'id') ),
-    ( SELECT MAX(id) FROM character_rarities )
-);
-
-create table if not exists character_factions (
-    id SMALLSERIAL not null constraint character_factions_pkey primary key,
-    name VARCHAR(255) not null default ''
-);
-insert into character_factions (id, name) values
-(1, 'Counter'),
-(2, 'Soldier'),
-(3, 'Mech')
-;
-SELECT SETVAL(
-    ( SELECT PG_GET_SERIAL_SEQUENCE('character_factions', 'id') ),
-    ( SELECT MAX(id) FROM character_factions )
 );

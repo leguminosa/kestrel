@@ -3,7 +3,8 @@ package http
 import (
 	"context"
 
-	"github.com/leguminosa/kestrel/internal/app/http/handler"
+	"github.com/leguminosa/kestrel/internal/app/http/controller"
+	"github.com/leguminosa/kestrel/internal/app/http/utilities"
 	"github.com/leguminosa/kestrel/internal/config"
 	character_module "github.com/leguminosa/kestrel/internal/module/character"
 	character_repo "github.com/leguminosa/kestrel/internal/repository/character"
@@ -16,16 +17,20 @@ func InitHTTPServer(ctx context.Context, cfg *config.Config) *serverImpl {
 	if err != nil {
 		return newServerWithError(err)
 	}
-	// defer dbClient.Close()
+
+	validate, err := utilities.RegisterValidator()
+	if err != nil {
+		return newServerWithError(err)
+	}
 
 	characterDB := postgres.NewCharacterDB(dbClient)
 	characterRepo := character_repo.NewCharacterRepository(characterDB)
 	characterModule := character_module.NewCharacterModule(characterRepo)
-	characterHandler := handler.NewCharacterHandler(characterModule)
+	characterController := controller.NewCharacter(validate, characterModule)
 
-	echo := provideHTTPServer(&controller{
-		characterHandler: characterHandler,
+	router := provideHTTPServer(&controllerGroup{
+		character: characterController,
 	})
 
-	return newServer(*cfg, echo)
+	return newServer(cfg.Server, router)
 }
